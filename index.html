@@ -1,113 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MeowBot | Roblox Script Info</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #111;
-            color: #fff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEOWBOT.WIN</title>
 
-        header {
-            background: #222;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 2px solid #444;
-        }
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #0a0a0a;
+        overflow: hidden;
+        color: white;
+    }
 
-        h1 {
-            margin: 0;
-            font-size: 3rem;
-            color: #ff6ec7;
-        }
+    /* PARTICLE CANVAS */
+    #particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: #0a0a0a;
+    }
 
-        .tagline {
-            margin-top: 5px;
-            font-size: 1.2rem;
-            color: #ddd;
-        }
+    /* CENTER TEXT */
+    .center-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        animation: fadeIn 2s ease forwards;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #1a1a1a;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(255, 110, 199, 0.2);
-        }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translate(-50%, -48%); }
+        to { opacity: 1; transform: translate(-50%, -50%); }
+    }
 
-        h2 {
-            color: #ff6ec7;
-            border-bottom: 2px solid #333;
-            padding-bottom: 5px;
-        }
+    .title {
+        font-size: 4rem;
+        font-weight: bold;
+        letter-spacing: 5px;
+        color: #ff6ec7;
+        text-shadow: 0 0 25px #ff6ec7;
+        white-space: nowrap;
+    }
 
-        pre {
-            background: #000;
-            padding: 15px;
-            border-radius: 10px;
-            overflow-x: auto;
-            border: 1px solid #333;
-        }
+    .subtitle {
+        font-size: 1.2rem;
+        color: #ddd;
+        margin-top: 10px;
+        opacity: 0;
+        animation: fadeIn 2s ease 1.5s forwards;
+    }
 
-        .footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            color: #aaa;
-        }
+    .code-box {
+        background: rgba(0, 0, 0, 0.6);
+        padding: 15px;
+        margin-top: 30px;
+        border-radius: 10px;
+        border: 1px solid #444;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        opacity: 0;
+        animation: fadeIn 2s ease 2.5s forwards;
+    }
 
-        a {
-            color: #ff6ec7;
-        }
-    </style>
+    pre {
+        margin: 0;
+        overflow-x: auto;
+        font-size: 1rem;
+    }
+
+    /* CURSOR BLINK */
+    .cursor {
+        display: inline-block;
+        width: 10px;
+        background: #ff6ec7;
+        margin-left: 5px;
+        animation: blink 0.6s infinite alternate;
+    }
+
+    @keyframes blink {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+</style>
 </head>
+
 <body>
 
-<header>
-    <h1>MeowBot</h1>
-    <div class="tagline">A simple, clean informational page for your Roblox script.</div>
-</header>
+<canvas id="particles"></canvas>
 
-<div class="container">
-    <h2>What is MeowBot?</h2>
-    <p>
-        <strong>MeowBot</strong> is a Roblox script designed to enhance your gameplay with smooth automation,
-        QoL improvements, and fun extra features. This page serves as the official information hub for updates,
-        usage instructions, and script details.
-    </p>
+<div class="center-box">
+    <div class="title"><span id="type"></span><span class="cursor"></span></div>
+    <div class="subtitle">A clean & powerful Roblox script.</div>
 
-    <h2>Features</h2>
-    <ul>
-        <li>🐾 Easy-to-use interface</li>
-        <li>⚙️ Lightweight and efficient</li>
-        <li>🚀 Fast execution</li>
-        <li>🔧 Customizable settings</li>
-        <li>📦 Auto-updating (if included in script)</li>
-    </ul>
-
-    <h2>Script Load Code</h2>
-    <p>Copy and paste this into your Roblox executor:</p>
-
-    <pre>
-loadstring(game:HttpGet("https://your-link-here.com/meowbot.lua"))()
-    </pre>
-
-    <h2>Updates</h2>
-    <p>
-        Check back here for new features, bug fixes, and announcements.
-        You can also link your Discord or GitHub here if you want.
-    </p>
-
+    <div class="code-box">
+        <pre>loadstring(game:HttpGet("https://your-link-here.com/meowbot.lua"))()</pre>
+    </div>
 </div>
 
-<div class="footer">
-    © 2025 MeowBot | Designed for Roblox enthusiasts.
-</div>
+<script>
+    /* TYPING ANIMATION */
+    const text = "MEOWBOT.WIN";
+    let i = 0;
+    function typeWriter() {
+        if (i < text.length) {
+            document.getElementById("type").innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 120);
+        }
+    }
+    typeWriter();
+
+    /* PARTICLE BACKGROUND */
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.onresize = resize;
+
+    function newParticle() {
+        return {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            speedX: (Math.random() - 0.5) * 0.5,
+            speedY: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 2 + 1
+        };
+    }
+
+    for (let i = 0; i < 100; i++) particles.push(newParticle());
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(p => {
+            p.x += p.speedX;
+            p.y += p.speedY;
+
+            if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+
+            ctx.fillStyle = "#ff6ec7";
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "#ff6ec7";
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+        });
+
+        requestAnimationFrame(animate);
+    }
+    animate();
+</script>
 
 </body>
 </html>
