@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>meowbot.win</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -101,6 +102,55 @@
         .btn-glow:hover {
             box-shadow: 0 0 15px rgba(255, 182, 193, 0.5);
         }
+        
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 200;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 17px;
+            border: 1px solid var(--light-pink);
+            box-shadow: 0 0 10px rgba(255, 182, 193, 0.2);
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        /* Modal Animation */
+        .modal-container {
+            display: none;
+        }
+        .modal-container.active {
+            display: flex;
+        }
+        .scale-in {
+            animation: scaleIn 0.2s ease-out forwards;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative">
@@ -113,13 +163,11 @@
         <div class="text-2xl font-bold tracking-wider lerp-text" style="font-family: 'Fira Code', monospace;">
             <span class="text-pink-300">&lt;</span>meowbot<span class="text-pink-300">/&gt;</span>
         </div>
+        <!-- Links removed as requested -->
         <div class="hidden md:flex space-x-8 text-pink-100/80 font-semibold">
-            <a href="#home" class="hover:text-pink-300 transition-colors">Home</a>
-            <a href="#features" class="hover:text-pink-300 transition-colors">Modules</a>
-            <a href="#about" class="hover:text-pink-300 transition-colors">System</a>
-            <a href="#connect" class="hover:text-pink-300 transition-colors">Connect</a>
+            <!-- Empty Nav area -->
         </div>
-        <!-- Mobile Menu Button (Visual only for this demo) -->
+        <!-- Mobile Menu Button (Visual only) -->
         <button class="md:hidden text-pink-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
@@ -131,21 +179,29 @@
     <main id="home" class="flex-grow flex items-center justify-center flex-col px-4 pt-20">
         <div class="text-center z-10 max-w-3xl">
             <!-- Typing Container -->
-            <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight" style="min-height: 1.5em;">
+            <h1 class="text-5xl md:text-7xl font-bold mb-2 tracking-tight" style="min-height: 1.2em;">
                 <span id="typing-text" class="lerp-text"></span><span class="cursor">&nbsp;</span>
             </h1>
             
+            <!-- Version Text -->
+            <div class="text-xl font-mono text-pink-200/80 mb-6 tracking-widest">Version B1</div>
+            
             <p class="text-lg md:text-xl text-gray-300 mb-10 font-light leading-relaxed max-w-2xl mx-auto">
-                The automated feline protocol for the modern web. 
-                <span class="text-pink-300">Cute. Fast. Responsive.</span>
+                The automated execution protocol for the modern user. 
+                <span class="text-pink-300">Stable. Powerful. Undetected.</span>
             </p>
 
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <button class="btn-glow px-8 py-3 rounded-full bg-pink-300 text-gray-900 font-bold text-lg hover:bg-white transition duration-300">
-                    Initialize
+                <!-- LoadString Button opens Modal now -->
+                <button onclick="openModal('loadstring-modal')" class="btn-glow px-8 py-3 rounded-full bg-pink-300 text-gray-900 font-bold text-lg hover:bg-white transition duration-300 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    LoadString
                 </button>
-                <button class="px-8 py-3 rounded-full border border-pink-300/50 text-pink-200 font-bold text-lg hover:bg-pink-900/20 transition duration-300 glass-card">
-                    Documentation
+                <!-- Info Button opens Modal now -->
+                <button onclick="openModal('info-modal')" class="px-8 py-3 rounded-full border border-pink-300/50 text-pink-200 font-bold text-lg hover:bg-pink-900/20 transition duration-300 glass-card">
+                    Information
                 </button>
             </div>
         </div>
@@ -160,7 +216,7 @@
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold mb-2 text-pink-100">Lightning Fast</h3>
-                <p class="text-sm text-gray-400">Optimized algorithms ensuring your bot purrs at maximum efficiency with minimal latency.</p>
+                <p class="text-sm text-gray-400">High-performance Lua execution environment ensuring your scripts run at maximum efficiency with zero latency drops.</p>
             </div>
 
             <!-- Card 2 -->
@@ -171,18 +227,18 @@
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold mb-2 text-pink-100">Fully Configurable</h3>
-                <p class="text-sm text-gray-400">Adjust the cuteness parameters and behavior logic to fit your specific server needs.</p>
+                <p class="text-sm text-gray-400">Extensive settings menu allowing you to toggle features, adjust ESP colors, and fine-tune aimbot smoothing.</p>
             </div>
 
             <!-- Card 3 -->
             <div class="glass-card p-8 rounded-2xl text-center">
                 <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-pink-500/30">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold mb-2 text-pink-100">Secure Core</h3>
-                <p class="text-sm text-gray-400">Protected by 9 lives of military-grade encryption. Your data stays safe in the kitty litter.</p>
+                <p class="text-sm text-gray-400">Advanced anti-tamper and obfuscation protocols to keep your account safe from detection systems.</p>
             </div>
         </div>
     </main>
@@ -192,7 +248,145 @@
         <p>&copy; 2025 meowbot.win systems. All rights reserved.</p>
     </footer>
 
+    <!-- LoadString Modal -->
+    <div id="loadstring-modal" class="modal-container fixed inset-0 z-[100] items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="glass-card max-w-3xl w-full p-6 rounded-2xl relative scale-in border border-pink-500/20">
+            <button onclick="closeModal('loadstring-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h2 class="text-2xl font-bold text-pink-300 mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                Script Loader
+            </h2>
+            <p class="text-gray-300 mb-4 text-sm">Copy the following script and execute it within your preferred Roblox executor.</p>
+            
+            <!-- Code Display Box -->
+            <div class="bg-black/50 p-4 rounded-lg font-mono text-xs text-pink-200 break-all border border-white/10 mb-6 overflow-y-auto max-h-40 select-all shadow-inner">
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/zotiax/yoyo219fdjwif3208cvhdifh32908chdwfj3280fhedd3wj12polf98fg3h21f90edfy32hol/main/fvdwejkfbno2hfhe2woifh03892hfoie20yufd238f3oi2hf89e2gfgdwifedihfwskljdfh3y2f3e2oifhe9082yrf32ufhe2908yfgh489e23hf8932hfio2jdfs089yuf8324hfo3k2390ec8dyf9g2efjep3o3u89898"))()
+            </div>
+
+            <button onclick="copySpecificLoadstring()" class="w-full btn-glow py-3 rounded-lg bg-pink-500/20 border border-pink-500/50 text-white font-bold hover:bg-pink-500/40 transition duration-300 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                </svg>
+                Copy to Clipboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Information Modal -->
+    <div id="info-modal" class="modal-container fixed inset-0 z-[100] items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="glass-card max-w-lg w-full p-6 rounded-2xl relative scale-in border border-blue-500/20">
+            <button onclick="closeModal('info-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h2 class="text-2xl font-bold text-pink-200 mb-6 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Script Information
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                    <span class="text-gray-400">Current Version</span>
+                    <span class="font-mono text-pink-300">Build B1-Release</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                    <span class="text-gray-400">Status</span>
+                    <span class="text-green-400 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        Undetected
+                    </span>
+                </div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                    <span class="text-gray-400">Supported Game</span>
+                    <div class="text-right">
+                        <span class="text-pink-200">Hood Customs</span>
+                        <span class="block text-[10px] text-gray-500 font-mono leading-tight">ID: 9825515356</span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                    <span class="text-gray-400">Last Updated</span>
+                    <span class="text-white">Nov 20, 2025</span>
+                </div>
+                <div class="flex justify-between items-center pt-2">
+                    <span class="text-gray-400">Developer</span>
+                    <span class="text-white">meowbot team</span>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-pink-500/10 border border-pink-500/20 p-4 rounded-lg">
+                <p class="text-xs text-pink-200/80 text-center">
+                    This software is for educational purposes only. Use at your own risk.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Element -->
+    <div id="toast">LoadString Copied to Clipboard!</div>
+
     <script>
+        /* --- Modal Logic --- */
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside the card
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-container')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        /* --- Clipboard Logic --- */
+        function copySpecificLoadstring() {
+            const loadString = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/zotiax/yoyo219fdjwif3208cvhdifh32908chdwfj3280fhedd3wj12polf98fg3h21f90edfy32hol/main/fvdwejkfbno2hfhe2woifh03892hfoie20yufd238f3oi2hf89e2gfgdwifedihfwskljdfh3y2f3e2oifhe9082yrf32ufhe2908yfgh489e23hf8932hfio2jdfs089yuf8324hfo3k2390ec8dyf9g2efjep3o3u89898"))()';
+            
+            // Fallback method using execCommand for iframe compatibility
+            const textArea = document.createElement("textarea");
+            textArea.value = loadString;
+            
+            // Ensure textarea is not visible but part of DOM
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            document.body.appendChild(textArea);
+            
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast();
+                } else {
+                    console.error('Copy command was unsuccessful');
+                }
+            } catch (err) {
+                console.error('Unable to copy', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function showToast() {
+            var x = document.getElementById("toast");
+            x.className = "show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+        }
+
         /* --- Typing Animation Logic --- */
         const textToType = "meowbot.win";
         const typingElement = document.getElementById('typing-text');
