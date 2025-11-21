@@ -1,113 +1,213 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>meowbot.win</title>
+    <title>meowbot.win // Next-Gen Utility</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        cyber: {
+                            dark: '#050507',
+                            panel: '#0f0f13',
+                            primary: '#8B5CF6',
+                            accent: '#D8B4FE',
+                            glow: '#a855f7'
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* Custom Base Styles */
         :root {
-            --light-pink: #FFB6C1;
-            --dark-pink: #FF1493;
-            --bg-dark: #0f0f13;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(10, 10, 12, 0.6);
+            --neon-glow: 0 0 20px rgba(139, 92, 246, 0.3);
         }
 
         body {
-            background-color: var(--bg-dark);
-            font-family: 'Quicksand', sans-serif;
-            color: white;
-            margin: 0;
+            background-color: #030304;
+            color: #e2e8f0;
             overflow-x: hidden;
         }
 
-        /* Particle Canvas behind everything */
-        #particle-canvas {
+        /* Noise Overlay for Texture */
+        .noise-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* The Lerp Animation (Linear Interpolation of Color) */
-        .lerp-text {
-            /* Gradient fallback */
-            background: -webkit-linear-gradient(#FFB6C1, #ff69b4);
-            -webkit-background-clip: text;
-            /* Animation */
-            animation: colorLerp 3s infinite alternate ease-in-out;
+        /* Enhanced Glassmorphism */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
 
-        @keyframes colorLerp {
-            0% {
-                color: #FFB6C1; /* Light Pink */
-                text-shadow: 0 0 10px rgba(255, 182, 193, 0.3);
-            }
-            100% {
-                color: #db5c92; /* Slightly darker/richer pink */
-                text-shadow: 0 0 20px rgba(219, 92, 146, 0.6);
-            }
-        }
-
-        /* Glassmorphism Card Style */
         .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 182, 193, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            background: linear-gradient(180deg, rgba(20, 20, 25, 0.7) 0%, rgba(10, 10, 12, 0.5) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .glass-card:hover {
-            border-color: rgba(255, 182, 193, 0.3);
-            transform: translateY(-2px);
-            transition: all 0.3s ease;
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px -10px rgba(139, 92, 246, 0.2);
         }
 
-        /* Typing Cursor */
-        .cursor {
-            display: inline-block;
-            width: 3px;
-            background-color: var(--light-pink);
-            animation: blink 1s infinite;
+        /* Text Gradients */
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #D8B4FE 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+        
+        .text-gradient-primary {
+            background: linear-gradient(to right, #c084fc, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0f0f13;
+            background: #050507;
         }
         ::-webkit-scrollbar-thumb {
-            background: #FFB6C1;
-            border-radius: 4px;
+            background: #333;
+            border-radius: 3px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #FF69B4;
+            background: #8B5CF6;
         }
 
-        /* Button Glow */
-        .btn-glow {
+        /* Cursor Effect */
+        #aura {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: radial-gradient(circle at center, #9333ea 0%, #7e22ce 100%);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
             transition: all 0.3s ease;
         }
-        .btn-glow:hover {
-            box-shadow: 0 0 15px rgba(255, 182, 193, 0.5);
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
         }
         
-        /* Toast Notification */
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 0 25px rgba(147, 51, 234, 0.4);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        /* Terminal Window Look */
+        .terminal-window {
+            background: #09090b;
+            border: 1px solid #27272a;
+            border-radius: 0.5rem;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* Blinking Cursor */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s step-start infinite;
+            color: #a855f7;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        
+        /* Modals */
+        .modal-container {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+        .modal-container.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-container.active .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Toast */
         #toast {
             visibility: hidden;
             min-width: 250px;
-            background-color: #333;
+            background-color: rgba(15, 15, 19, 0.9);
+            backdrop-filter: blur(10px);
             color: #fff;
             text-align: center;
             border-radius: 8px;
@@ -116,224 +216,381 @@
             z-index: 200;
             left: 50%;
             bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 17px;
-            border: 1px solid var(--light-pink);
-            box-shadow: 0 0 10px rgba(255, 182, 193, 0.2);
+            transform: translateX(-50%) translateY(20px);
+            font-size: 14px;
+            border: 1px solid #8B5CF6;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: all 0.3s ease;
         }
-
         #toast.show {
             visibility: visible;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
-        @keyframes fadein {
-            from {bottom: 0; opacity: 0;}
-            to {bottom: 30px; opacity: 1;}
-        }
-
-        @keyframes fadeout {
-            from {bottom: 30px; opacity: 1;}
-            to {bottom: 0; opacity: 0;}
-        }
-
-        /* Modal Animation */
-        .modal-container {
-            display: none;
-        }
-        .modal-container.active {
-            display: flex;
-        }
-        .scale-in {
-            animation: scaleIn 0.2s ease-out forwards;
-        }
-        @keyframes scaleIn {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col relative">
+<body class="antialiased selection:bg-purple-500/30 selection:text-white">
 
-    <!-- Background Canvas for Particles -->
-    <canvas id="particle-canvas"></canvas>
+    <div class="noise-overlay"></div>
 
-    <!-- Navigation -->
-    <nav class="w-full py-6 px-8 flex justify-between items-center fixed top-0 z-50 backdrop-blur-sm bg-black/20 border-b border-white/5">
-        <div class="text-2xl font-bold tracking-wider lerp-text" style="font-family: 'Fira Code', monospace;">
-            <span class="text-pink-300">&lt;</span>meowbot<span class="text-pink-300">/&gt;</span>
+    <div id="aura"></div>
+
+    <canvas id="particle-canvas" class="fixed inset-0 z-[-2] opacity-60"></canvas>
+
+    <div class="lg:hidden fixed top-0 left-0 w-full h-16 glass-panel z-50 flex items-center justify-between px-6">
+        <div class="text-xl font-bold font-mono tracking-tight">
+            <span class="text-purple-400">&lt;</span>meowbot<span class="text-purple-400">/&gt;</span>
         </div>
-        <!-- Links removed as requested -->
-        <div class="hidden md:flex space-x-8 text-pink-100/80 font-semibold">
-            <!-- Empty Nav area -->
-        </div>
-        <!-- Mobile Menu Button (Visual only) -->
-        <button class="md:hidden text-pink-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        <button onclick="toggleSidebar()" class="text-gray-300 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
         </button>
-    </nav>
+    </div>
 
-    <!-- Hero Section -->
-    <main id="home" class="flex-grow flex items-center justify-center flex-col px-4 pt-20">
-        <div class="text-center z-10 max-w-3xl">
-            <!-- Typing Container -->
-            <h1 class="text-5xl md:text-7xl font-bold mb-2 tracking-tight" style="min-height: 1.2em;">
-                <span id="typing-text" class="lerp-text"></span><span class="cursor">&nbsp;</span>
-            </h1>
-            
-            <!-- Version Text -->
-            <div class="text-xl font-mono text-pink-200/80 mb-6 tracking-widest">Version B1</div>
-            
-            <p class="text-lg md:text-xl text-gray-300 mb-10 font-light leading-relaxed max-w-2xl mx-auto">
-                The automated execution protocol for the modern user. 
-                <span class="text-pink-300">Stable. Powerful. Undetected.</span>
-            </p>
-
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <!-- LoadString Button opens Modal now -->
-                <button onclick="openModal('loadstring-modal')" class="btn-glow px-8 py-3 rounded-full bg-pink-300 text-gray-900 font-bold text-lg hover:bg-white transition duration-300 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                    </svg>
-                    LoadString
-                </button>
-                <!-- Info Button opens Modal now -->
-                <button onclick="openModal('info-modal')" class="px-8 py-3 rounded-full border border-pink-300/50 text-pink-200 font-bold text-lg hover:bg-pink-900/20 transition duration-300 glass-card">
-                    Information
-                </button>
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-72 glass-panel border-r border-white/5 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="p-8 mb-6">
+            <div class="text-3xl font-bold tracking-tight font-mono select-none">
+                <span class="text-purple-500">&lt;</span>meowbot<span class="text-purple-500">/&gt;</span>
             </div>
+            <div class="text-[10px] text-gray-500 font-mono mt-1 tracking-[0.2em] uppercase">Precision Framework</div>
         </div>
-
-        <!-- Feature Grid -->
-        <div id="features" class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mt-32 px-4 mb-20">
-            <!-- Card 1 -->
-            <div class="glass-card p-8 rounded-2xl text-center">
-                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-pink-500/30">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2 text-pink-100">Lightning Fast</h3>
-                <p class="text-sm text-gray-400">High-performance Lua execution environment ensuring your scripts run at maximum efficiency with zero latency drops.</p>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="glass-card p-8 rounded-2xl text-center">
-                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-pink-500/30">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2 text-pink-100">Fully Configurable</h3>
-                <p class="text-sm text-gray-400">Extensive settings menu allowing you to toggle features, adjust ESP colors, and fine-tune aimbot smoothing.</p>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="glass-card p-8 rounded-2xl text-center">
-                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-pink-500/30">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2 text-pink-100">Secure Core</h3>
-                <p class="text-sm text-gray-400">Advanced anti-tamper and obfuscation protocols to keep your account safe from detection systems.</p>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="w-full py-6 text-center text-gray-500 text-sm border-t border-white/5 bg-black/20 backdrop-blur-md">
-        <p>&copy; 2025 meowbot.win systems. All rights reserved.</p>
-    </footer>
-
-    <!-- LoadString Modal -->
-    <div id="loadstring-modal" class="modal-container fixed inset-0 z-[100] items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-        <div class="glass-card max-w-3xl w-full p-6 rounded-2xl relative scale-in border border-pink-500/20">
-            <button onclick="closeModal('loadstring-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h2 class="text-2xl font-bold text-pink-300 mb-4 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        
+        <div class="flex flex-col gap-2 px-4">
+            <button onclick="openModal('loadstring-modal')" class="btn-primary text-white font-medium py-3 px-4 rounded-xl flex items-center gap-3 shadow-lg shadow-purple-900/20 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
-                Script Loader
-            </h2>
-            <p class="text-gray-300 mb-4 text-sm">Copy the following script and execute it within your preferred Roblox executor.</p>
+                <span>Welcome</span>
+            </button>
             
-            <!-- Code Display Box -->
-            <div class="bg-black/50 p-4 rounded-lg font-mono text-xs text-pink-200 break-all border border-white/10 mb-6 overflow-y-auto max-h-40 select-all shadow-inner">
-                Under Maintenance
+            <div class="h-px bg-white/5 my-4 mx-2"></div>
+
+            <button onclick="openModal('info-modal')" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:text-purple-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Information
+            </button>
+            
+            <button onclick="openSupportedGamesModal()" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:text-purple-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 100 4m-4 10v-4m4 4v-4m4 4v-4m-4-2h4m-4 2h4M7 6h10a2 2 0 012 2v10a2 2 0 01-2 2H7a2 2 0 01-2-2V8a2 2 0 012-2z" />
+                </svg>
+                Supported Games
+            </button>
+            
+            <a href="https://docs.meowbot.win" target="_blank" onclick="openExternalLink(event)" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:text-purple-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                Documentation
+            </a>
+        </div>
+
+        <div class="mt-8 px-6">
+            <p class="text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-3">Quick Navigate</p>
+            <div class="flex flex-col gap-1">
+                <a href="#features-main" onclick="smoothScroll(event, 'features-main'); toggleSidebar()" class="text-sm text-gray-500 hover:text-purple-300 hover:translate-x-1 transition-all duration-200 block py-1">High Performance</a>
+                <a href="#card-2" onclick="smoothScroll(event, 'card-2'); toggleSidebar()" class="text-sm text-gray-500 hover:text-purple-300 hover:translate-x-1 transition-all duration-200 block py-1">Config System</a>
+                <a href="#card-3" onclick="smoothScroll(event, 'card-3'); toggleSidebar()" class="text-sm text-gray-500 hover:text-purple-300 hover:translate-x-1 transition-all duration-200 block py-1">Security Core</a>
+            </div>
+        </div>
+
+        <div class="mt-auto p-6 border-t border-white/5 bg-black/20">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs text-gray-500">Version</span>
+                <span class="text-xs font-mono text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded">B1-REL</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500">Status</span>
+                <span class="text-[10px] text-red-400 flex items-center gap-1.5 font-semibold bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
+                    <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                    MAINTENANCE
+                </span>
+            </div>
+        </div>
+    </aside>
+
+    <main id="main-content" class="lg:ml-72 relative z-10 transition-all duration-300">
+        
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 z-30 hidden lg:hidden backdrop-blur-sm"></div>
+
+        <section id="home" class="min-h-screen flex items-center justify-center flex-col px-6 py-20 relative overflow-hidden">
+            <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/20 rounded-full blur-[100px] animate-pulse"></div>
+            
+            <div class="text-center max-w-4xl relative z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8 animate-fade-in-up">
+                    <span class="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc]"></span>
+                    <span class="text-xs font-mono text-purple-200">BUILD B1-RELEASE LIVE</span>
+                </div>
+
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 tracking-tight leading-tight font-sans">
+                    <span class="text-gradient">meowbot</span><span class="text-purple-500">.</span>win
+                </h1>
+                
+                <div class="h-12 md:h-16 mb-8 flex items-center justify-center">
+                    <span id="typing-text" class="text-xl md:text-3xl font-mono text-gray-400 typing-cursor"></span>
+                </div>
+                
+                <p class="text-lg md:text-xl text-gray-400 mb-12 font-light leading-relaxed max-w-2xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s;">
+                    The ultimate utility framework, designed for <span class="text-white font-medium">unparalleled precision</span> and awareness.
+                    Stable. Powerful. Undetected.
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-4 animate-fade-in-up" style="animation-delay: 0.4s;">
+                    <button onclick="openModal('loadstring-modal')" class="btn-primary text-white px-8 py-3.5 rounded-lg font-semibold tracking-wide text-sm flex items-center gap-2">
+                        Get Started
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <a href="https://discord.gg/xkkxCENWU7" class="px-8 py-3.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white font-medium text-sm transition-all">
+                        Join Discord
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features-main" class="w-full max-w-7xl mx-auto px-6 py-24">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Engineered for Performance</h2>
+                <p class="text-gray-500 max-w-xl mx-auto">Everything you need to dominate, wrapped in a lightweight, secure package.</p>
             </div>
 
-            <button onclick="copySpecificLoadstring()" class="w-full btn-glow py-3 rounded-lg bg-pink-500/20 border border-pink-500/50 text-white font-bold hover:bg-pink-500/40 transition duration-300 flex items-center justify-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                </svg>
-                Copy to Clipboard
-            </button>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <div id="card-1" class="glass-card p-8 rounded-3xl relative group cursor-pointer overflow-hidden"
+                    onclick="openFeatureModal('Highly Optimized', 'The core uses a custom Lua C-Bridge interface, executing latency-critical logic via compiled C functions before returning control to the Lua thread. This ensures zero thread contention and maintains a high, stable frame rate.')">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    
+                    <div class="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center mb-6 border border-purple-500/30 group-hover:scale-110 transition-transform duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors">Highly Optimized</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Custom C-Bridge interface ensures zero thread contention for buttery smooth framerates.</p>
+                </div>
+
+                <div id="card-2" class="glass-card p-8 rounded-3xl relative group cursor-pointer overflow-hidden"
+                    onclick="openFeatureModal('Fully Configurable', 'Features an advanced, native Immediate Mode GUI (IMGUI) built entirely in Lua. This provides a deep, hierarchical menu structure, allowing users to write and execute custom configuration profiles.')">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                    <div class="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center mb-6 border border-purple-500/30 group-hover:scale-110 transition-transform duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors">Fully Configurable</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Advanced IMGUI with deep hierarchical menus and hot-swappable config files.</p>
+                </div>
+
+                <div id="card-3" class="glass-card p-8 rounded-3xl relative group cursor-pointer overflow-hidden"
+                    onclick="openFeatureModal('Secure Core', 'Employs a multi-layered obfuscation routine, including control-flow flattening and instruction substitution. The core runs in a randomized Lua environment to mask against memory scanners.')">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                    <div class="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center mb-6 border border-purple-500/30 group-hover:scale-110 transition-transform duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors">Secure Core</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Multi-layered obfuscation and dynamic sandbox loading to keep your account safe.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="w-full py-8 text-center border-t border-white/5 bg-black/40 backdrop-blur-md mt-20">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <span class="text-purple-500 font-mono">&lt;/&gt;</span>
+            </div>
+            <p class="text-gray-500 text-sm">&copy; 2025 meowbot.win systems. All rights reserved.</p>
+        </footer>
+
+    </main>
+
+    <div id="loadstring-modal" class="modal-container fixed inset-0 z-[100] items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="modal-content glass-panel max-w-2xl w-full rounded-2xl relative overflow-hidden border border-purple-500/30 shadow-[0_0_50px_rgba(139,92,246,0.15)]">
+            <div class="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 bg-purple-500 rounded-full shadow-[0_0_8px_#a855f7]"></span>
+                    Injector Script
+                </h2>
+                <button onclick="closeModal('loadstring-modal')" class="text-gray-500 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="p-6">
+                <p class="text-gray-400 mb-4 text-sm">Execute the following command in your executor (Synapse X, KRNL, Script-Ware):</p>
+                
+                <div class="terminal-window p-4 mb-6 group relative">
+                    <div class="flex gap-1.5 mb-3 opacity-50">
+                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="font-mono text-xs md:text-sm text-purple-300 break-all select-all leading-relaxed">
+                        <span class="text-purple-500">loadstring</span>(game:<span class="text-blue-400">HttpGet</span>(<span class="text-green-400">"Under Maintenance"</span>))()
+                    </div>
+                    <div class="absolute top-3 right-3 text-[10px] text-gray-600 font-mono uppercase">Lua</div>
+                </div>
+
+                <button onclick="copySpecificLoadstring()" class="w-full btn-primary py-3 rounded-xl text-white font-bold text-sm tracking-wide flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copy to Clipboard
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Information Modal -->
-    <div id="info-modal" class="modal-container fixed inset-0 z-[100] items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-        <div class="glass-card max-w-lg w-full p-6 rounded-2xl relative scale-in border border-blue-500/20">
-            <button onclick="closeModal('info-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+    <div id="info-modal" class="modal-container fixed inset-0 z-[100] items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="modal-content glass-panel max-w-md w-full p-0 rounded-2xl relative border border-white/10">
+            <div class="h-32 bg-gradient-to-br from-purple-900 to-black rounded-t-2xl relative overflow-hidden">
+                <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-purple-500 blur-[60px] opacity-50"></div>
+                <button onclick="closeModal('info-modal')" class="absolute top-4 right-4 text-white/50 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="px-6 pb-8 -mt-12 relative">
+                <div class="w-20 h-20 rounded-2xl bg-black border border-purple-500/30 flex items-center justify-center shadow-lg mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-white mb-1">System Info</h2>
+                <p class="text-gray-400 text-sm mb-6">Build details and core status.</p>
+
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                        <span class="text-gray-400 text-sm">Version Hash</span>
+                        <span class="font-mono text-purple-300 text-xs">b1-rel-stable</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                        <span class="text-gray-400 text-sm">Core Status</span>
+                        <span class="text-red-400 flex items-center gap-2 text-xs font-bold bg-red-500/10 px-2 py-1 rounded border border-red-500/20">
+                            <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                            MAINTENANCE
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                        <span class="text-gray-400 text-sm">Last Patch</span>
+                        <span class="text-white text-sm">Nov 21, 2025</span>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-6 border-t border-white/5 text-center">
+                    <p class="text-[10px] text-gray-600 uppercase tracking-widest">Educational Purpose Only</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="supported-games-modal" class="modal-container fixed inset-0 z-[100] items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="modal-content glass-panel max-w-lg w-full p-6 rounded-2xl relative border border-white/10">
+            <button onclick="closeModal('supported-games-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <h2 class="text-2xl font-bold text-pink-200 mb-6 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Script Information
-            </h2>
             
-            <div class="space-y-4">
-                <div class="flex justify-between items-center border-b border-white/10 pb-2">
-                    <span class="text-gray-400">Current Version</span>
-                    <span class="font-mono text-pink-300">Build B1-Release</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-white/10 pb-2">
-                    <span class="text-gray-400">Status</span>
-                    <span class="text-red-400 flex items-center gap-2">
-                        <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                        Under Maintenance
-                    </span>
-                </div>
-                <div class="flex justify-between items-center border-b border-white/10 pb-2">
-                    <span class="text-gray-400">Supported Game</span>
-                    <div class="text-right">
-                        <span class="text-pink-200">Hood Customs</span>
-                        <span class="block text-[10px] text-gray-500 font-mono leading-tight">ID: 9825515356</span>
+            <h2 class="text-2xl font-bold text-white mb-6">Game Status</h2>
+            
+            <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+                <div class="group flex justify-between items-center p-4 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 font-bold text-xs border border-red-500/20">HC</div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-200 block group-hover:text-white">Hood Customs</span>
+                            <span class="text-[10px] text-gray-500 font-mono">ID: 9825515356</span>
+                        </div>
                     </div>
+                    <span class="text-[10px] font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-1 rounded-md uppercase tracking-wide">Down</span>
                 </div>
-                <div class="flex justify-between items-center border-b border-white/10 pb-2">
-                    <span class="text-gray-400">Last Updated</span>
-                    <span class="text-white">Nov 20, 2025</span>
+
+                <div class="group flex justify-between items-center p-4 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 font-bold text-xs border border-red-500/20">SD</div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-200 block group-hover:text-white">Sniper Duels</span>
+                            <span class="text-[10px] text-gray-500 font-mono">ID: 10939...</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-1 rounded-md uppercase tracking-wide">Down</span>
                 </div>
-                <div class="flex justify-between items-center pt-2">
-                    <span class="text-gray-400">Developer</span>
-                    <span class="text-white">meowbot team</span>
+
+                <div class="group flex justify-between items-center p-4 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 font-bold text-xs border border-red-500/20">TN</div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-200 block group-hover:text-white">Town</span>
+                            <span class="text-[10px] text-gray-500 font-mono">ID: 4991214437</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-1 rounded-md uppercase tracking-wide">Down</span>
                 </div>
             </div>
-
-            <div class="mt-8 bg-pink-500/10 border border-pink-500/20 p-4 rounded-lg">
-                <p class="text-xs text-pink-200/80 text-center">
-                    This software is for educational purposes only. Use at your own risk.
+            
+            <div class="mt-6 p-3 bg-yellow-500/5 border border-yellow-500/10 rounded-lg">
+                <p class="text-xs text-yellow-200/80 text-center flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Mass maintenance in progress for Anti-Cheat bypass.
                 </p>
             </div>
         </div>
     </div>
+    
+    <div id="feature-modal" class="modal-container fixed inset-0 z-[100] items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="modal-content glass-panel max-w-lg w-full p-8 rounded-2xl relative border border-purple-500/20">
+            <button onclick="closeModal('feature-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h2 id="feature-modal-title" class="text-3xl font-bold text-gradient-primary mb-4"></h2>
+            <div class="w-16 h-1 bg-purple-500 rounded-full mb-6"></div>
+            <p id="feature-modal-description" class="text-base text-gray-300 leading-7 font-light"></p>
+            
+            <div class="mt-8 flex justify-end">
+                <button onclick="closeModal('feature-modal')" class="text-sm text-purple-400 hover:text-purple-300 font-medium">Close</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- Toast Notification Element -->
-    <div id="toast">LoadString Copied to Clipboard!</div>
+    <div id="toast"></div>
 
     <script>
+        /* --- Layout Logic --- */
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const main = document.getElementById('main-content');
+            
+            // Check current state via transform class
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
         /* --- Modal Logic --- */
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
@@ -343,102 +600,146 @@
             document.getElementById(modalId).classList.remove('active');
         }
 
-        // Close modal when clicking outside the card
         window.onclick = function(event) {
             if (event.target.classList.contains('modal-container')) {
                 event.target.classList.remove('active');
             }
         }
+        
+        function openSupportedGamesModal() {
+            openModal('supported-games-modal');
+        }
+
+        function openFeatureModal(title, description) {
+            document.getElementById('feature-modal-title').textContent = title;
+            document.getElementById('feature-modal-description').textContent = description;
+            openModal('feature-modal');
+        }
 
         /* --- Clipboard Logic --- */
         function copySpecificLoadstring() {
             const loadString = 'Under Maintenance';
-            
-            // Fallback method using execCommand for iframe compatibility
-            const textArea = document.createElement("textarea");
-            textArea.value = loadString;
-            
-            // Ensure textarea is not visible but part of DOM
-            textArea.style.position = "fixed";
-            textArea.style.left = "-9999px";
-            textArea.style.top = "0";
-            document.body.appendChild(textArea);
-            
-            textArea.focus();
-            textArea.select();
-            
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showToast();
-                } else {
-                    console.error('Copy command was unsuccessful');
-                }
-            } catch (err) {
-                console.error('Unable to copy', err);
+            // Using Clipboard API if available
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(loadString).then(() => {
+                    showToast('Script Copied to Clipboard!');
+                });
+            } else {
+                // Fallback
+                const textArea = document.createElement("textarea");
+                textArea.value = loadString;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('Script Copied to Clipboard!');
             }
-            
-            document.body.removeChild(textArea);
+        }
+        
+        function openExternalLink(event) {
+            event.preventDefault(); 
+            const url = event.currentTarget.href;
+            showToast('Opening Documentation...');
+            setTimeout(() => window.open(url, '_blank'), 500);
         }
 
-        function showToast() {
+        function showToast(message) {
             var x = document.getElementById("toast");
+            x.innerHTML = `<div class="flex items-center gap-2"><svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> ${message}</div>`;
             x.className = "show";
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         }
 
-        /* --- Typing Animation Logic --- */
-        const textToType = "meowbot.win";
+        /* --- Typing Animation --- */
         const typingElement = document.getElementById('typing-text');
+        const phrases = [
+            "Dominate the Server.",
+            "Undetected Framework.",
+            "Premium Lua Environment."
+        ];
+        let phraseIndex = 0;
         let charIndex = 0;
+        let isDeleting = false;
+        const typingSpeed = 100;
+        const deletingSpeed = 50;
+        const pauseDelay = 2000;
 
         function typeWriter() {
-            if (charIndex < textToType.length) {
-                typingElement.innerHTML += textToType.charAt(charIndex);
+            const currentPhrase = phrases[phraseIndex];
+            if (isDeleting) {
+                typingElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+                if (charIndex === 0) {
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    setTimeout(typeWriter, deletingSpeed);
+                }
+            } else {
+                typingElement.textContent = currentPhrase.substring(0, charIndex + 1);
                 charIndex++;
-                setTimeout(typeWriter, 150); // Typing speed
+                if (charIndex === currentPhrase.length) {
+                    isDeleting = true;
+                    setTimeout(typeWriter, pauseDelay);
+                } else {
+                    setTimeout(typeWriter, typingSpeed);
+                }
+            }
+        }
+        setTimeout(typeWriter, 500);
+
+        /* --- Aura Mouse Follow --- */
+        const aura = document.getElementById('aura');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateAura() {
+            // Simple lerp could be added here, but CSS transition handles smoothing for now
+            aura.style.left = `${mouseX}px`;
+            aura.style.top = `${mouseY}px`;
+            requestAnimationFrame(animateAura);
+        }
+        animateAura();
+
+        /* --- Smooth Scroll --- */
+        function smoothScroll(event, targetId) {
+            event.preventDefault();
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
             }
         }
 
-        // Start typing after a short delay
-        setTimeout(typeWriter, 500);
-
-
-        /* --- Particle Background Logic --- */
+        /* --- Particle Canvas (Optimized) --- */
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
-
         let particlesArray;
-
-        // Resize canvas
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        // Handle resize
-        window.addEventListener('resize', () => {
+        
+        function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', () => {
+            resizeCanvas();
             init();
         });
+        resizeCanvas();
 
-        // Mouse interactions
-        const mouse = {
-            x: null,
-            y: null,
-            radius: 150
-        }
-
+        const mouse = { x: null, y: null, radius: 150 }
         window.addEventListener('mousemove', (event) => {
             mouse.x = event.x;
             mouse.y = event.y;
         });
 
-        window.addEventListener('mouseout', () => {
-            mouse.x = undefined;
-            mouse.y = undefined;
-        });
-
-        // Particle Class
         class Particle {
             constructor(x, y, directionX, directionY, size, color) {
                 this.x = x;
@@ -448,86 +749,55 @@
                 this.size = size;
                 this.color = color;
             }
-
-            // Method to draw individual particle
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
                 ctx.fillStyle = this.color;
                 ctx.fill();
             }
-
-            // Check particle position, check mouse position, move the particle, draw the particle
             update() {
-                // Check if particle is still within canvas
-                if (this.x > canvas.width || this.x < 0) {
-                    this.directionX = -this.directionX;
-                }
-                if (this.y > canvas.height || this.y < 0) {
-                    this.directionY = -this.directionY;
-                }
+                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
 
-                // Check collision detection - mouse position / particle position
+                // Interaction
                 let dx = mouse.x - this.x;
                 let dy = mouse.y - this.y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
-                
-                // Interaction: Move away from mouse
                 if (distance < mouse.radius + this.size) {
-                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
-                        this.x += 3;
-                    }
-                    if (mouse.x > this.x && this.x > this.size * 10) {
-                        this.x -= 3;
-                    }
-                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
-                        this.y += 3;
-                    }
-                    if (mouse.y > this.y && this.y > this.size * 10) {
-                        this.y -= 3;
-                    }
+                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) this.x += 2;
+                    if (mouse.x > this.x && this.x > this.size * 10) this.x -= 2;
+                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) this.y += 2;
+                    if (mouse.y > this.y && this.y > this.size * 10) this.y -= 2;
                 }
-
-                // Move particle
                 this.x += this.directionX;
                 this.y += this.directionY;
-                
-                // Draw particle
                 this.draw();
             }
         }
 
-        // Create particle array
         function init() {
             particlesArray = [];
-            let numberOfParticles = (canvas.height * canvas.width) / 9000; // Density
-            
+            let numberOfParticles = (canvas.height * canvas.width) / 15000; // Reduced density for cleaner look
             for (let i = 0; i < numberOfParticles; i++) {
-                let size = (Math.random() * 2) + 1;
+                let size = (Math.random() * 2) + 0.5;
                 let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
                 let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-                let directionX = (Math.random() * 1) - 0.5; // Speed
-                let directionY = (Math.random() * 1) - 0.5;
-                
-                // Color: Light Pink with transparency
-                let color = 'rgba(255, 182, 193, 0.6)'; 
-
+                let directionX = (Math.random() * 0.4) - 0.2;
+                let directionY = (Math.random() * 0.4) - 0.2;
+                let color = '#8B5CF6'; // Solid purple
                 particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
             }
         }
 
-        // Animation Loop
         function animate() {
             requestAnimationFrame(animate);
             ctx.clearRect(0, 0, innerWidth, innerHeight);
-
             for (let i = 0; i < particlesArray.length; i++) {
                 particlesArray[i].update();
             }
             connect();
         }
 
-        // Check if particles are close enough to draw line
         function connect() {
             let opacityValue = 1;
             for (let a = 0; a < particlesArray.length; a++) {
@@ -535,9 +805,9 @@
                     let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
                     + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
                     
-                    if (distance < (canvas.width/7) * (canvas.height/7)) {
-                        opacityValue = 1 - (distance/20000);
-                        ctx.strokeStyle = 'rgba(255, 182, 193,' + opacityValue * 0.2 + ')'; // Very faint pink lines
+                    if (distance < (canvas.width/9) * (canvas.height/9)) {
+                        opacityValue = 1 - (distance/15000);
+                        ctx.strokeStyle = 'rgba(139, 92, 246,' + opacityValue * 0.15 + ')'; // Fainter lines
                         ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
@@ -550,7 +820,6 @@
 
         init();
         animate();
-
     </script>
 </body>
 </html>
